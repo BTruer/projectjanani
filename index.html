@@ -142,6 +142,52 @@
             }
         }
         
+        .scroll-instruction {
+            position: absolute;
+            bottom: 5vh; /* Much lower - only 5% from bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: white;
+            z-index: 15;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+            pointer-events: none;
+        }
+        
+        .scroll-instruction.hidden {
+            opacity: 0;
+        }
+        
+        .instruction-text {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 300;
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.8);
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .instruction-arrow {
+            display: flex;
+            justify-content: center;
+            animation: pulseArrow 2s ease-in-out infinite;
+        }
+        
+        .instruction-arrow svg {
+            filter: drop-shadow(1px 1px 5px rgba(0,0,0,0.7));
+        }
+        
+        @keyframes pulseArrow {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(8px);
+                opacity: 1;
+            }
+        }
+        
         .content-section {
             min-height: 100vh;
             display: flex;
@@ -214,25 +260,7 @@
     </style>
 </head>
 <body class="bg-black text-white overflow-x-hidden">
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md transition-all duration-300" id="navbar">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <!-- <div class="text-xl font-light tracking-wide">Project Janani</div> -->
-                <!-- <div class="hidden md:flex space-x-8 text-sm">
-                    <a href="#home" class="hover:text-gray-300 transition-colors">Home</a>
-                    <a href="#about" class="hover:text-gray-300 transition-colors">About</a>
-                    <a href="#team" class="hover:text-gray-300 transition-colors">Team</a>
-                    <a href="#support" class="hover:text-gray-300 transition-colors">Support</a>
-                </div> -->
-                <button class="md:hidden">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </nav>
+
 
          <!-- Hero Section with Scroll Animation -->
      <section id="home" class="hero-container">
@@ -265,6 +293,16 @@
              <div class="scroll-indicator">
                  <div class="text-sm mb-2 opacity-80">Scroll to explore</div>
                  <div class="scroll-arrow">↓</div>
+             </div>
+             
+             <!-- Scroll instruction in bottom 1/3 -->
+             <div class="scroll-instruction" id="scrollInstruction">
+                 <div class="instruction-text">Scroll</div>
+                 <div class="instruction-arrow">
+                     <svg width="24" height="40" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                         <path d="M12 2L12 35M12 35L5 28M12 35L19 28" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                     </svg>
+                 </div>
              </div>
          </div>
      </section>
@@ -338,11 +376,11 @@
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="text-center">
                         <h3 class="text-xl font-light mb-2">Praneeth Madhu</h3>
-                        <p class="text-gray-600">Director, Editor</p>
+                        <p class="text-gray-600">Director & Editor</p>
                     </div>
                     <div class="text-center">
                         <h3 class="text-xl font-light mb-2">Sunit Patil</h3>
-                        <p class="text-gray-600">Research and Writing</p>
+                        <p class="text-gray-600">Research & Writing</p>
                     </div>
                     <div class="text-center">
                         <h3 class="text-xl font-light mb-2">Aditya Patwardhan</h3>
@@ -350,7 +388,7 @@
                     </div>
                     <div class="text-center">
                         <h3 class="text-xl font-light mb-2">Bhargav Tarpara</h3>
-                        <p class="text-gray-600">Assistant Director</p>
+                        <p class="text-gray-600">AD & Executive Producer</p>
                     </div>
                     <div class="text-center">
                         <h3 class="text-xl font-light mb-2">Rama Sardar</h3>
@@ -425,7 +463,7 @@
         });
 
                  // Image sequence scroll animation - SMOOTH AS BUTTER
-         const TOTAL_FRAMES = 135;
+         const TOTAL_FRAMES = 338;
          let framesLoaded = 0;
          let imagesReady = false;
          let currentFrame = 1;
@@ -504,22 +542,22 @@
                  const titleFadeProgress = (scrollProgress - 0.9) / 0.1;
                  heroContent.style.opacity = Math.min(titleFadeProgress, 1);
              }
+             
+             // Hide scroll instruction when animation is complete (80% through)
+             const scrollInstruction = document.getElementById('scrollInstruction');
+             if (scrollInstruction) {
+                 if (scrollProgress >= 0.8) {
+                     scrollInstruction.classList.add('hidden');
+                 } else {
+                     scrollInstruction.classList.remove('hidden');
+                 }
+             }
          }
 
          // Immediate scroll response - no throttling needed with images
          window.addEventListener('scroll', updateFrameSequence, { passive: true });
 
-        // Navbar background on scroll
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 100) {
-                navbar.classList.add('bg-black/95');
-                navbar.classList.remove('bg-black/80');
-            } else {
-                navbar.classList.add('bg-black/80');
-                navbar.classList.remove('bg-black/95');
-            }
-        });
+
 
          // Initialize everything immediately
          document.addEventListener('DOMContentLoaded', () => {
